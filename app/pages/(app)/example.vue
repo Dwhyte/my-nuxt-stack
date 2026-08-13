@@ -26,9 +26,16 @@ const {
 <template>
   <div class="mx-auto max-w-2xl px-4 py-8 md:px-6">
     <div class="space-y-3 text-center">
-      <div class="inline-flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-700">
+      <v-chip
+        variant="tonal"
+        color="success"
+        size="small"
+        label
+        :ripple="false"
+        class="font-medium"
+      >
         Server data loaded
-      </div>
+      </v-chip>
       <h1 class="font-display text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
         Example
       </h1>

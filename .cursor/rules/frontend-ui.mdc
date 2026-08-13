@@ -1,0 +1,52 @@
+---
+description: Nuxt frontend UI — Vuetify for interactive components, Tailwind for layout; v-chip for contextual labels
+globs: app/**/*.{vue,ts}
+alwaysApply: false
+---
+
+# Frontend UI (Nuxt + Vuetify + Tailwind)
+
+Tokens: `app/assets/css/main.css`, `app/assets/css/tailwind.css`, `app/assets/css/vuetify-overrides.css`.
+
+## Component vs layout split
+
+| Layer | Tool | Examples |
+| --- | --- | --- |
+| Interactive UI | **Vuetify** | `v-btn`, `v-text-field`, `v-alert`, `v-card`, `v-progress-circular` |
+| Contextual labels & tags | **Vuetify** | `v-chip` for eyebrows, status pills, tag lists, filter chips |
+| Page structure | **Tailwind** | flex/grid, `min-h-dvh`, gaps, padding, responsive breakpoints |
+| Typography | **Tailwind** | `font-sans` (Inter) for UI/body, `font-display` (Manrope) for headings |
+
+## Rules
+
+1. Reach for **Vuetify primitives first** for interactive controls — do not use raw `<button>` / `<input>` when a Vuetify equivalent exists.
+2. Use **`v-chip`** for contextual labels, eyebrows, status pills, and tag-like UI ([chip usage](https://vuetifyjs.com/en/components/chips/#usage)). Set `:ripple="false"` on non-interactive labels.
+3. Use **Tailwind utility classes** on wrappers and on Vuetify via `class="..."` for layout and token alignment (`bg-muted`, `text-foreground`).
+4. Primary CTAs: **`AppActionButton`** — see [action-buttons](action-buttons.mdc).
+5. Avoid scoped `<style>` blocks in Vue SFCs. Repeated Vuetify overrides go in **`vuetify-overrides.css`** with `@layer vuetify-overrides`.
+6. Match sibling patterns before inventing new styling.
+
+## Examples
+
+```vue
+<!-- Good: static eyebrow — v-chip + tokens -->
+<v-chip variant="flat" size="small" label :ripple="false" class="bg-muted font-medium text-foreground">
+  my-nuxt-stack
+</v-chip>
+
+<!-- Good: semantic status pill -->
+<v-chip variant="tonal" color="success" size="small" label :ripple="false" class="font-medium">
+  Server data loaded
+</v-chip>
+
+<!-- Good: Tailwind structure + Vuetify card -->
+<div class="mx-auto max-w-2xl px-4 py-8">
+  <v-card variant="outlined" class="rounded-2xl">...</v-card>
+</div>
+
+<!-- Avoid: raw div mimicking a chip when v-chip fits -->
+<div class="inline-flex rounded-lg bg-muted px-4 py-1.5 text-sm">my-nuxt-stack</div>
+
+<!-- Avoid: raw input when v-text-field fits -->
+<input class="rounded-lg border px-3 py-2" />
+```

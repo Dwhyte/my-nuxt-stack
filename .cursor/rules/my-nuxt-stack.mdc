@@ -27,5 +27,13 @@ Nuxt 4 starter with Vuetify 4 + Tailwind v4, tRPC, BetterAuth, Prisma.
 
 ## UI
 
+- Vuetify vs Tailwind split: see [frontend-ui](frontend-ui.mdc)
 - Primary action buttons: use `AppActionButton` — see [action-buttons](action-buttons.mdc)
 - App shell: `app/layouts/app.vue` with sidebar + bottom nav
+
+## Skills
+
+Activate project skills from `.cursor/skills/` when relevant:
+
+- **UI:** `tailwindcss-development`, `vuetify-development`
+- **Trigger.dev:** see [trigger-skills](trigger-skills.mdc)
