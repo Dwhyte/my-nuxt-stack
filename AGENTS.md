@@ -25,6 +25,14 @@ Load the relevant skill from `.cursor/skills/` when working in that domain:
 | `trigger-chat-agent-advanced` | Advanced chat.agent patterns |
 | `trigger-cost-savings` | Task compute/cost optimization |
 | `trigger-getting-started` | New Trigger.dev setup (before SDK installed) |
+| `manage-mcp` | MCP server setup, tools/resources/prompts in `server/mcp/` (`.agents/skills/manage-mcp`) |
+
+## MCP
+
+- MCP definitions live in `server/mcp/` (tools, resources, prompts)
+- Business logic stays in `server/services/` — MCP tools call services, not raw Prisma
+- Local endpoint: `https://localhost:3000/mcp` (see `.cursor/mcp.json`)
+- Load `manage-mcp` skill when authoring or troubleshooting MCP code
 
 ## Conventions
 

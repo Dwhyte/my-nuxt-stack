@@ -37,7 +37,11 @@ export default defineNuxtConfig({
     enabled: true,
   },
 
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', '@nuxtjs/mcp-toolkit'],
+
+  mcp: {
+    name: 'my-nuxt-stack',
+  },
 
   css: ['~/assets/css/tailwind.css', '~/assets/css/main.css', '~/assets/css/vuetify-overrides.css', 'vuetify/styles'],
 
