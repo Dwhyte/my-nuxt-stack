@@ -1,0 +1,31 @@
+---
+description: my-nuxt-stack conventions
+alwaysApply: true
+---
+
+# my-nuxt-stack
+
+Nuxt 4 starter with Vuetify 4 + Tailwind v4, tRPC, BetterAuth, Prisma.
+
+## Stack
+
+- Nuxt 4 + Vue 3 + Vuetify 4 + Tailwind v4
+- tRPC + vue-query for API
+- BetterAuth for auth (magic link + Google OAuth)
+- Prisma + PostgreSQL
+- Pinia for client state
+- Trigger.dev for background jobs
+
+## Conventions
+
+- Vue SFC order: `<script setup>` → `<template>` → `<style>`
+- Server business logic lives in `server/services/`, not in pages or tRPC routers
+- Background tasks live in `server/trigger/` — dispatch with `tasks.trigger()` from services or tRPC
+- Mobile overlays: `MobileBottomSheet` with `AdaptiveOverlay` for desktop
+- Primary action buttons: use `AppActionButton`
+- Nav config: `app/constants/appNav.ts`
+
+## UI
+
+- Primary action buttons: use `AppActionButton` — see [action-buttons](action-buttons.mdc)
+- App shell: `app/layouts/app.vue` with sidebar + bottom nav

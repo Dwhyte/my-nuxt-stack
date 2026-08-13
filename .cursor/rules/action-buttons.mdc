@@ -1,0 +1,51 @@
+---
+description: Primary action button style — black CTA default for app, auth, and onboarding
+globs: app/**/*.vue
+alwaysApply: false
+---
+
+# Action buttons
+
+Primary CTAs use the **black action button** (Sign in / Continue style): `#111111` background, white text, 52px min-height, 16px radius.
+
+## Use `AppActionButton`
+
+Default component for primary actions in the app shell, sheets, and footers:
+
+```vue
+<AppActionButton @click="onSubmit">Continue</AppActionButton>
+```
+
+- [`app/components/AppActionButton.vue`](app/components/AppActionButton.vue) — canonical implementation
+- [`OnboardingFooterCta`](app/features/onboarding/components/OnboardingFooterCta.vue) — thin wrapper for onboarding pages (same styling)
+
+Props: `disabled`, `loading`, `type` (`button` | `submit`), `block` (default `true`).
+
+## Do not use for primary CTAs
+
+```vue
+<!-- BAD: purple primary is not the action button style -->
+<v-btn color="primary" variant="flat">Continue</v-btn>
+
+<!-- BAD: raw class when AppActionButton fits -->
+<v-btn class="jobs-hub-cta">Continue</v-btn>
+```
+
+`jobs-hub-cta` is a legacy alias — prefer `AppActionButton` (applies `auth-cta-btn` internally).
+
+## Secondary / tertiary actions
+
+- **Secondary:** `variant="outlined"` or dashed placeholder buttons
+- **Tertiary / skip:** `variant="text"`, muted foreground
+- **Toolbar chips:** small tonal/outlined `v-btn` — not full action buttons
+
+## Tokens
+
+Defined in [`app/assets/css/main.css`](app/assets/css/main.css):
+
+- `--auth-cta: #111111`
+- `--auth-cta-hover: #2b2b2b`
+- `--auth-cta-foreground: #ffffff`
+- `--auth-radius-button: 16px`
+
+Styled via `.auth-cta-btn` in [`app/assets/css/vuetify-overrides.css`](app/assets/css/vuetify-overrides.css). Applied globally (not layout-scoped) so portaled bottom sheets and dialogs get the same style.
