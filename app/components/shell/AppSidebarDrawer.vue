@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import IconifyIcon from '~/components/IconifyIcon.vue'
 import { appSideNavItems } from '~/constants/appNav'
 
 const DRAWER_WIDTH = computed(() => isDesktop.value ? 227 : 300)
@@ -15,18 +14,53 @@ const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
 const appInitial = computed(() => appName.value.charAt(0).toUpperCase() || 'A')
 
-const navItems = computed(() => {
+interface ResolvedNavChild {
+  key: string
+  label: string
+  link: string
+  active: boolean
+  disabled: boolean
+  badge: string | null
+}
+
+interface ResolvedNavItem {
+  key: string
+  label: string
+  icon?: string
+  link: string
+  action: string | null
+  active: boolean
+  disabled: boolean
+  badge: string | null
+  children: ResolvedNavChild[]
+}
+
+const navItems = computed<ResolvedNavItem[]>(() => {
   const current = route.path.replace(/\/+$/, '') || '/'
 
   const isActive = (to: string): boolean => {
     const target = to.replace(/\/+$/, '') || '/'
+
     return current === target || current.startsWith(`${target}/`)
   }
 
   return appSideNavItems.map((item) => ({
-    ...item,
-    active: isActive(item.to),
+    key: item.key,
+    label: item.label,
+    icon: item.icon,
+    link: item.to ?? '',
+    action: item.action ?? null,
+    active: item.action ? false : isActive(item.to ?? ''),
+    disabled: false,
+    badge: null,
+    children: [],
   }))
+})
+
+const settingsNavActive = computed(() => {
+  const current = route.path.replace(/\/+$/, '') || '/'
+
+  return current === '/settings' || current.startsWith('/settings/')
 })
 
 watch(
@@ -37,14 +71,14 @@ watch(
   { immediate: true },
 )
 
-function navItemClass(active: boolean, extra = '', spacedOnMobile = false): string {
+function navItemClass(active: boolean, disabled: boolean, extra = '', spacedOnMobile = false): string {
   const classes = ['side-nav-item', 'rounded-lg', extra].filter(Boolean)
 
   if (spacedOnMobile && !isDesktop.value) {
     classes.push('mb-[0.7rem]')
   }
 
-  if (!active) {
+  if (!active && !disabled) {
     classes.push('side-nav-item--inactive')
   }
 
@@ -59,6 +93,11 @@ function navTitleClass(gap: 'gap-2' | 'gap-4' = 'gap-4'): string {
     gap,
     isDesktop.value ? 'text-sm font-medium' : '!text-lg font-medium',
   ].join(' ')
+}
+
+function openSettings(): void {
+  drawerOpen.value = false
+  navigateTo('/settings')
 }
 </script>
 
@@ -77,7 +116,7 @@ function navTitleClass(gap: 'gap-2' | 'gap-4' = 'gap-4'): string {
       <div class="flex items-center px-2 py-3">
         <NuxtLink
           to="/dashboard"
-          class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+          class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground no-underline"
           :aria-label="`${appName} home`"
         >
           <span class="font-display text-sm font-extrabold">{{ appInitial }}</span>
@@ -86,19 +125,95 @@ function navTitleClass(gap: 'gap-2' | 'gap-4' = 'gap-4'): string {
     </template>
 
     <v-list nav :lines="false">
-      <v-list-item
-        v-for="item in navItems"
-        :key="item.key"
-        link
-        :to="item.to"
-        :active="item.active"
-        :class="navItemClass(item.active, '', true)"
-      >
-        <v-list-item-title :class="navTitleClass()">
-          <IconifyIcon :name="item.icon" :style="{ width: `${navIconSize}px`, height: `${navIconSize}px` }" />
-          {{ item.label }}
-        </v-list-item-title>
-      </v-list-item>
+      <template v-for="item in navItems" :key="item.key">
+        <v-list-group v-if="item.children.length > 0" :value="item.key">
+          <template #activator="{ props: activatorProps }">
+            <v-list-item v-bind="activatorProps" :active="item.active" :class="navItemClass(item.active, item.disabled, '', true)">
+              <v-list-item-title :class="navTitleClass('gap-2')">
+                <v-icon v-if="item.icon" :size="navIconSize">{{ item.icon }}</v-icon>
+                {{ item.label }}
+                <span v-if="item.badge" class="ms-1 text-on-surface/40">{{ item.badge }}</span>
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+
+          <v-list-item
+            v-for="child in item.children"
+            :key="child.key"
+            link
+            :to="child.disabled ? undefined : child.link"
+            :active="child.active"
+            :disabled="child.disabled"
+            :class="navItemClass(child.active, child.disabled, 'ml-5', true)"
+          >
+            <v-list-item-title :class="navTitleClass('gap-2')">
+              {{ child.label }}
+              <span v-if="child.badge" class="ms-1 text-on-surface/40">{{ child.badge }}</span>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-item
+          v-else-if="item.action"
+          link
+          :class="navItemClass(false, item.disabled, '', true)"
+          @click="drawerOpen = false"
+        >
+          <v-list-item-title :class="navTitleClass()">
+            <v-icon v-if="item.icon" :size="navIconSize">{{ item.icon }}</v-icon>
+            {{ item.label }}
+            <span v-if="item.badge" class="ms-1 text-on-surface/40">{{ item.badge }}</span>
+          </v-list-item-title>
+        </v-list-item>
+
+        <v-list-item
+          v-else
+          link
+          :to="item.disabled ? undefined : item.link"
+          :active="item.active"
+          :disabled="item.disabled"
+          :class="navItemClass(item.active, item.disabled, '', true)"
+        >
+          <v-list-item-title :class="navTitleClass()">
+            <v-icon v-if="item.icon" :size="navIconSize">{{ item.icon }}</v-icon>
+            {{ item.label }}
+            <span v-if="item.badge" class="ms-1 text-on-surface/40">{{ item.badge }}</span>
+          </v-list-item-title>
+        </v-list-item>
+      </template>
     </v-list>
+
+    <template #append>
+      <v-divider />
+      <div class="flex flex-col gap-1 pb-2">
+        <v-list density="compact" nav :lines="false">
+          <v-list-item
+            v-if="isDesktop"
+            link
+            to="/settings"
+            :active="settingsNavActive"
+            :class="navItemClass(settingsNavActive, false)"
+          >
+            <v-list-item-title :class="navTitleClass()">
+              <v-icon icon="solar:settings-linear" :size="navIconSize" />
+              Settings
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            v-else
+            link
+            :active="settingsNavActive"
+            :class="navItemClass(settingsNavActive, false)"
+            @click="openSettings"
+          >
+            <v-list-item-title :class="navTitleClass()">
+              <v-icon icon="solar:settings-linear" :size="navIconSize" />
+              Settings
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>

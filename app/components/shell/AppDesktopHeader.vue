@@ -9,8 +9,12 @@ const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
 
 const navTitle = computed(() => {
+  if (route.path === '/settings' || route.path.startsWith('/settings/')) {
+    return 'Settings'
+  }
+
   const match = appSideNavItems.find(
-    (item) => route.path === item.to || route.path.startsWith(`${item.to}/`),
+    (item) => item.to && (route.path === item.to || route.path.startsWith(`${item.to}/`)),
   )
   return match?.label ?? appName.value
 })

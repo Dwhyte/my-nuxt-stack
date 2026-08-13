@@ -8,11 +8,14 @@ export type AppNavItem = {
   action?: AppNavAction
 }
 
+export type AppSideNavAction = string
+
 export type AppSideNavItem = {
   key: string
   label: string
-  to: string
+  to?: string
   icon: string
+  action?: AppSideNavAction
 }
 
 export const appNavItems: AppNavItem[] = [
@@ -25,13 +28,12 @@ export const appNavItems: AppNavItem[] = [
 export const appSideNavItems: AppSideNavItem[] = [
   { key: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: 'solar:home-bold' },
   { key: 'example', label: 'Example', to: '/example', icon: 'solar:folder-outline' },
-  { key: 'settings', label: 'Settings', to: '/settings', icon: 'solar:settings-linear' },
 ]
 
 export function resolveAppSideNavKey(path: string): string | null {
   const current = path.replace(/\/+$/, '') || '/'
   const match = appSideNavItems.find(
-    (item) => current === item.to || current.startsWith(`${item.to}/`),
+    (item) => item.to && (current === item.to || current.startsWith(`${item.to}/`)),
   )
   return match?.key ?? null
 }
