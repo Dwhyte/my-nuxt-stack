@@ -1,37 +1,42 @@
 <script setup lang="ts">
-import IconifyIcon from '~/components/IconifyIcon.vue'
-import { showBackFromRoute, showBarTitleFromRoute } from '~/composables/useAppHeader'
-import { appSideNavItems } from '~/constants/appNav'
+import IconifyIcon from "~/components/IconifyIcon.vue";
+import {
+  showBackFromRoute,
+  showBarTitleFromRoute,
+} from "~/composables/useAppHeader";
+import { appSideNavItems } from "~/constants/appNav";
 
-const route = useRoute()
-const router = useRouter()
-const config = useRuntimeConfig()
-const appName = computed(() => config.public.appName as string)
+const route = useRoute();
+const router = useRouter();
+const config = useRuntimeConfig();
+const appName = computed(() => config.public.appName as string);
 
 const navTitle = computed(() => {
-  if (route.path === '/settings' || route.path.startsWith('/settings/')) {
-    return 'Settings'
+  if (route.path === "/settings" || route.path.startsWith("/settings/")) {
+    return "Settings";
   }
 
   const match = appSideNavItems.find(
-    (item) => item.to && (route.path === item.to || route.path.startsWith(`${item.to}/`)),
-  )
-  return match?.label ?? appName.value
-})
+    (item) =>
+      item.to &&
+      (route.path === item.to || route.path.startsWith(`${item.to}/`)),
+  );
+  return match?.label ?? appName.value;
+});
 
-const showBack = computed(() => showBackFromRoute(route.path, route.meta))
-const showBarTitle = computed(() => showBarTitleFromRoute(route.meta))
-const appInitial = computed(() => appName.value.charAt(0).toUpperCase() || 'A')
+const showBack = computed(() => showBackFromRoute(route.path, route.meta));
+const showBarTitle = computed(() => showBarTitleFromRoute(route.meta));
+const appInitial = computed(() => appName.value.charAt(0).toUpperCase() || "A");
 
 function handleBack(): void {
-  const backTo = route.meta.appHeaderBackTo
+  const backTo = route.meta.appHeaderBackTo;
 
   if (backTo) {
-    navigateTo(backTo)
-    return
+    navigateTo(backTo);
+    return;
   }
 
-  router.back()
+  router.back();
 }
 </script>
 
@@ -46,14 +51,6 @@ function handleBack(): void {
   >
     <div class="flex h-13 w-full items-center gap-2 px-6">
       <div class="flex shrink-0 items-center gap-2">
-        <NuxtLink
-          to="/dashboard"
-          class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"
-          :aria-label="`${appName} home`"
-        >
-          <span class="font-display text-sm font-extrabold">{{ appInitial }}</span>
-        </NuxtLink>
-
         <v-btn
           v-if="showBack"
           icon
@@ -74,7 +71,9 @@ function handleBack(): void {
           aria-label="Current page"
           class="flex min-w-0 shrink items-center gap-1.5 text-sm"
         >
-          <span class="truncate font-medium text-foreground">{{ navTitle }}</span>
+          <span class="truncate font-medium text-foreground"
+            >{{ navTitle }}
+          </span>
         </nav>
       </div>
 

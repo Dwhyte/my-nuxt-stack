@@ -11,7 +11,7 @@ useMe()
 const drawerOpen = ref(false)
 const route = useRoute()
 const display = useDisplay()
-const { open: sheetOpen } = useAppBottomSheet()
+const { open: sheetOpen, openSheet } = useAppBottomSheet()
 
 const isDesktop = computed(() => display.mdAndUp.value)
 const hideBottomNav = computed(() => Boolean(route.meta.hideBottomNav))
@@ -44,6 +44,7 @@ function openNav(): void {
     <AppBottomNav
       v-if="!hideBottomNav"
       @open-nav="openNav"
+      @open-create="openSheet"
     />
 
     <MobileBottomSheet v-if="!isDesktop" v-model:open="sheetOpen" />
