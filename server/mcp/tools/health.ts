@@ -1,3 +1,5 @@
+import { defineMcpTool } from '@nuxtjs/mcp-toolkit/server'
+
 export default defineMcpTool({
   name: 'health',
   description: 'Check that the MCP server and app are running',
