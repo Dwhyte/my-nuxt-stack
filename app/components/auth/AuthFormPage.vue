@@ -14,17 +14,17 @@ const title = computed(() => (props.mode === 'signup' ? 'Sign up' : 'Sign in'))
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-[400px] px-6 py-10 font-sans md:px-0 md:py-16">
-    <h1 class="font-display text-[2rem] font-extrabold leading-[2.625rem] tracking-tight text-[var(--auth-ink)]">
-      {{ title }}
-    </h1>
+  <UCard class="w-full max-w-md">
+    <template #header>
+      <h1 class="text-highlighted text-2xl font-bold tracking-tight">
+        {{ title }}
+      </h1>
+    </template>
 
-    <div class="mt-8">
-      <AuthMagicLinkForm :mode="mode" />
-    </div>
+    <AuthMagicLinkForm :mode="mode" />
 
-    <p class="mt-8 text-center text-[15px] font-normal text-[var(--auth-muted)]">
+    <p class="text-muted mt-6 text-center text-sm">
       New here? Enter your email — we'll create your account when you sign in.
     </p>
-  </div>
+  </UCard>
 </template>

@@ -39,38 +39,37 @@ async function onContinue(): Promise<void> {
 </script>
 
 <template>
-  <div class="flex min-h-dvh items-center justify-center px-6">
-    <div class="w-full max-w-[400px]">
-      <h1 class="font-display text-2xl font-extrabold text-[var(--auth-ink)]">
-        Welcome!
-      </h1>
-      <h2 class="mt-1 font-display text-[1.75rem] font-extrabold leading-tight text-[var(--auth-ink)]">
-        What's your name?
-      </h2>
+  <div class="flex min-h-svh items-center justify-center p-4 md:p-8">
+    <UCard class="w-full max-w-md">
+      <template #header>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-highlighted text-2xl font-bold tracking-tight">
+            Welcome!
+          </h1>
+          <p class="text-muted text-sm">
+            What's your name?
+          </p>
+        </div>
+      </template>
 
-      <div class="mt-8">
-        <v-text-field
+      <UFormField label="Name" :error="nameError ?? undefined">
+        <UInput
           v-model="name"
           placeholder="Sam Lee"
           autocomplete="name"
           autofocus
-          variant="solo-filled"
-          flat
-          rounded="xl"
-          hide-details="auto"
-          class="auth-field"
-          :error-messages="nameError ? [nameError] : []"
           @keyup.enter="onContinue"
         />
-      </div>
+      </UFormField>
 
-      <AppActionButton
-        class="mt-4"
-        :loading="isPending"
-        @click="onContinue"
-      >
-        Continue
-      </AppActionButton>
-    </div>
+      <template #footer>
+        <AppActionButton
+          :loading="isPending"
+          @click="onContinue"
+        >
+          Continue
+        </AppActionButton>
+      </template>
+    </UCard>
   </div>
 </template>

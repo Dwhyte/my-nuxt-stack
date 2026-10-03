@@ -1,89 +1,81 @@
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
-
-import IconifyIcon from "~/components/IconifyIcon.vue";
+import IconifyIcon from '~/components/IconifyIcon.vue'
 import {
   exitSitePreview,
   sitePreviewActive,
-} from "~/composables/useSitePreviewMode";
+} from '~/composables/useSitePreviewMode'
 
 const emit = defineEmits<{
-  openNav: [];
-  openCreate: [];
-}>();
+  openNav: []
+  openCreate: []
+}>()
 
-const display = useDisplay();
-const route = useRoute();
-
-const isDesktop = computed(() => display.mdAndUp.value);
+const { isDesktop } = useAppDisplay()
+const route = useRoute()
 
 const showEditSite = computed(
-  (): boolean => route.path === "/site" && sitePreviewActive.value,
-);
+  (): boolean => route.path === '/site' && sitePreviewActive.value,
+)
 
 type BottomNavAction =
   | {
-      id: string;
-      label: string;
-      icon: string;
-      kind: "menu" | "search" | "create";
+      id: string
+      label: string
+      icon: string
+      kind: 'menu' | 'search' | 'create'
     }
   | {
-      id: string;
-      label: string;
-      icon: string;
-      kind: "link" | "dashboard";
-      to: string;
-    };
+      id: string
+      label: string
+      icon: string
+      kind: 'link' | 'dashboard'
+      to: string
+    }
 
 const actions = computed<BottomNavAction[]>(() => {
   const firstAction: BottomNavAction = isDesktop.value
     ? {
-        id: "dashboard",
-        label: "Dashboard",
-        icon: "solar:home-outline",
-        kind: "dashboard",
-        to: "/dashboard",
+        id: 'dashboard',
+        label: 'Dashboard',
+        icon: 'solar:home-outline',
+        kind: 'dashboard',
+        to: '/dashboard',
       }
-    : { id: "menu", label: "Menu", icon: "lucide:menu", kind: "menu" };
+    : { id: 'menu', label: 'Menu', icon: 'lucide:menu', kind: 'menu' }
 
   return [
     firstAction,
-    { id: "search", label: "Search", icon: "lucide:search", kind: "search" },
-    { id: "new", label: "New", icon: "lucide:plus", kind: "create" },
+    { id: 'search', label: 'Search', icon: 'lucide:search', kind: 'search' },
+    { id: 'new', label: 'New', icon: 'lucide:plus', kind: 'create' },
     {
-      id: "example",
-      label: "Example",
-      icon: "jam:world",
-      kind: "link",
-      to: "/example",
+      id: 'example',
+      label: 'Example',
+      icon: 'jam:world',
+      kind: 'link',
+      to: '/example',
     },
-  ];
-});
+  ]
+})
 
 function isLinkAction(
   action: BottomNavAction,
-): action is Extract<BottomNavAction, { kind: "link" | "dashboard" }> {
-  return action.kind === "link" || action.kind === "dashboard";
-}
-
-function actionClasses(): string {
-  return "bottom-nav-action shrink-0 text-white";
+): action is Extract<BottomNavAction, { kind: 'link' | 'dashboard' }> {
+  return action.kind === 'link' || action.kind === 'dashboard'
 }
 
 function onAction(action: BottomNavAction): void {
-  if (action.kind === "menu") {
-    emit("openNav");
-    return;
+  if (action.kind === 'menu') {
+    emit('openNav')
+    return
   }
 
-  if (action.kind === "create") {
-    emit("openCreate");
+  if (action.kind === 'create') {
+    emit('openCreate')
   }
 }
 
 function onEditSite(): void {
-  exitSitePreview();
+  exitSitePreview()
 }
 </script>
 
@@ -107,41 +99,43 @@ function onEditSite(): void {
         :aria-hidden="showEditSite"
       >
         <template v-for="action in actions" :key="action.id">
-          <v-tooltip
-            location="top"
-            content-class="app-ui-tooltip"
+          <UTooltip
+            v-if="isLinkAction(action)"
+            :text="action.label"
             :disabled="!isDesktop"
-            :open-delay="350"
+            :delay-duration="350"
           >
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-if="isLinkAction(action)"
-                v-bind="tooltipProps"
-                :to="action.to"
-                :icon="action.icon"
-                variant="text"
-                rounded="lg"
-                density="comfortable"
-                :class="actionClasses()"
-                :aria-label="action.label"
-                :tabindex="showEditSite ? -1 : undefined"
-              />
+            <UButton
+              :to="action.to"
+              variant="ghost"
+              color="neutral"
+              square
+              class="bottom-nav-action shrink-0"
+              :aria-label="action.label"
+              :tabindex="showEditSite ? -1 : undefined"
+            >
+              <IconifyIcon :name="action.icon" class="size-5" />
+            </UButton>
+          </UTooltip>
 
-              <v-btn
-                v-else
-                v-bind="tooltipProps"
-                :icon="action.icon"
-                variant="text"
-                rounded="lg"
-                density="comfortable"
-                :class="actionClasses()"
-                :aria-label="action.label"
-                :tabindex="showEditSite ? -1 : undefined"
-                @click="onAction(action)"
-              />
-            </template>
-            {{ action.label }}
-          </v-tooltip>
+          <UTooltip
+            v-else
+            :text="action.label"
+            :disabled="!isDesktop"
+            :delay-duration="350"
+          >
+            <UButton
+              variant="ghost"
+              color="neutral"
+              square
+              class="bottom-nav-action shrink-0"
+              :aria-label="action.label"
+              :tabindex="showEditSite ? -1 : undefined"
+              @click="onAction(action)"
+            >
+              <IconifyIcon :name="action.icon" class="size-5" />
+            </UButton>
+          </UTooltip>
         </template>
       </div>
 
@@ -163,21 +157,3 @@ function onEditSite(): void {
     </div>
   </nav>
 </template>
-
-<style scoped>
-.bottom-nav-action.v-btn {
-  width: 40px;
-  height: 40px;
-}
-
-.bottom-nav-action :deep(.v-icon) {
-  font-size: 20px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bottom-nav-pill,
-  .bottom-nav-layer {
-    transition: none;
-  }
-}
-</style>

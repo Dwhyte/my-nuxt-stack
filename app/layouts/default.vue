@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh bg-background text-foreground">
+  <main class="min-h-svh bg-default">
     <slot />
-  </div>
+  </main>
 </template>

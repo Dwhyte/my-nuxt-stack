@@ -1,13 +1,13 @@
 # my-nuxt-stack — Agent guidelines
 
-Nuxt 4 starter: Vuetify 4 + Tailwind v4, tRPC, Better Auth, Prisma, Trigger.dev, Pinia.
+Nuxt 4 starter: Nuxt UI + Tailwind v4, tRPC, Better Auth, Prisma, Trigger.dev, Pinia.
 
 ## Cursor rules
 
 Always follow `.cursor/rules/`:
 
 - **`my-nuxt-stack.mdc`** — stack, conventions, server layout
-- **`frontend-ui.mdc`** — Vuetify vs Tailwind, `v-chip` for labels/tags
+- **`frontend-ui.mdc`** — Nuxt UI vs Tailwind, `UChip` for labels/tags
 - **`action-buttons.mdc`** — primary CTAs via `AppActionButton`
 - **`trigger-skills.mdc`** — pointer to Trigger.dev skills
 
@@ -18,7 +18,6 @@ Load the relevant skill from `.cursor/skills/` when working in that domain:
 | Skill | When |
 | --- | --- |
 | `tailwindcss-development` | Layout, spacing, typography, Tailwind v4 utilities in Vue |
-| `vuetify-development` | Vuetify components, variants, overrides |
 | `trigger-authoring-tasks` | Background/scheduled tasks in `server/trigger/` |
 | `trigger-realtime-and-frontend` | Live run updates, browser triggering |
 | `trigger-authoring-chat-agent` | `chat.agent` AI agents |
@@ -41,22 +40,22 @@ Load the relevant skill from `.cursor/skills/` when working in that domain:
 - Background jobs: `server/trigger/` — dispatch with `tasks.trigger()`
 - Mobile overlays: `MobileBottomSheet` + `AdaptiveOverlay`
 - Nav config: `app/constants/appNav.ts`
-- Design tokens: `app/assets/css/main.css`, `tailwind.css`, `vuetify-overrides.css`
+- Design tokens: `app/assets/css/main.css`, `tailwind.css`, `ui-overrides.css`
 
 ## UI quick reference
 
 | Layer | Tool |
 | --- | --- |
-| Forms, cards, alerts, nav | Vuetify |
-| Contextual labels, tags, pills | `v-chip` (`:ripple="false"` when static) |
+| Forms, cards, alerts, nav | Nuxt UI (`UButton`, `UInput`, `UCard`, …) |
+| Contextual labels, tags, pills | `UChip` / `UBadge` |
 | Layout, spacing, typography | Tailwind |
 | Primary CTAs | `AppActionButton` |
 
-Combo is normal: Tailwind on wrappers and `class="..."` on Vuetify components.
+Combo is normal: Tailwind on wrappers and `class="..."` / `ui` on Nuxt UI components.
 
 ## Do not
 
 - Create markdown docs unless explicitly requested
 - Commit unless explicitly requested
-- Use raw `<button>` / `<input>` when Vuetify equivalents exist
-- Use scoped `<style>` for repeated Vuetify overrides — use `vuetify-overrides.css`
+- Use raw `<button>` / `<input>` when Nuxt UI equivalents exist
+- Use scoped `<style>` for repeated app-wide overrides — use `ui-overrides.css`

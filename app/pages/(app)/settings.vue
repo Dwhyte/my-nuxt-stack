@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppActionButton from '~/components/AppActionButton.vue'
 import { useLogout, useMe } from '~/features/auth/mutations'
 
 definePageMeta({
@@ -16,41 +15,60 @@ async function handleLogout(): Promise<void> {
 </script>
 
 <template>
-  <div class="mx-auto max-w-lg px-4 py-8 md:px-6">
-    <h1 class="font-display text-3xl font-extrabold tracking-tight text-foreground">
-      Settings
-    </h1>
-    <p class="mt-2 text-muted-foreground">
-      Your account details
-    </p>
+  <div class="flex min-h-svh items-center justify-center p-4 md:p-8">
+    <UCard class="w-full max-w-lg">
+      <template #header>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-highlighted text-xl font-semibold">
+            Settings
+          </h1>
+          <p class="text-muted text-sm">
+            Your account details
+          </p>
+        </div>
+      </template>
 
-    <v-card class="mt-8 rounded-2xl" variant="outlined">
-      <v-card-text class="space-y-4 pt-6">
+      <div class="space-y-4">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p class="text-muted text-xs font-semibold uppercase tracking-wide">
             Name
           </p>
-          <p class="mt-1 text-lg font-medium text-foreground">
+          <p class="text-highlighted mt-1 text-lg font-medium">
             {{ user?.name ?? '—' }}
           </p>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p class="text-muted text-xs font-semibold uppercase tracking-wide">
             Email
           </p>
-          <p class="mt-1 text-lg font-medium text-foreground">
+          <p class="text-highlighted mt-1 text-lg font-medium">
             {{ user?.email ?? '—' }}
           </p>
         </div>
-      </v-card-text>
-    </v-card>
+      </div>
 
-    <AppActionButton
-      class="mt-6"
-      :loading="isLoggingOut"
-      @click="handleLogout"
-    >
-      Sign out
-    </AppActionButton>
+      <template #footer>
+        <div class="flex w-full flex-col gap-2">
+          <UButton
+            variant="outline"
+            size="lg"
+            block
+            to="/dashboard"
+          >
+            Back to Demo Page A
+          </UButton>
+          <UButton
+            size="lg"
+            block
+            color="error"
+            variant="soft"
+            :loading="isLoggingOut"
+            @click="handleLogout"
+          >
+            Sign out
+          </UButton>
+        </div>
+      </template>
+    </UCard>
   </div>
 </template>

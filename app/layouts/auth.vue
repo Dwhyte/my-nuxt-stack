@@ -1,16 +1,5 @@
-<script setup lang="ts">
-</script>
-
 <template>
-  <v-app class="auth-layout bg-[var(--auth-surface)]">
-    <v-main class="flex min-h-dvh items-center justify-center bg-[var(--auth-surface)]">
-      <slot />
-    </v-main>
-  </v-app>
+  <div class="bg-muted flex min-h-svh items-center justify-center p-4">
+    <slot />
+  </div>
 </template>
-
-<style scoped>
-.auth-layout {
-  color: var(--auth-ink);
-}
-</style>

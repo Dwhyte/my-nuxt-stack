@@ -1,68 +1,4 @@
-import type { ThemeInstance } from 'vuetify'
-
 export type ThemeMode = 'light' | 'dark'
-
-export const VUETIFY_COLOR_CSS_VARS: Record<string, string> = {
-  background: '--background',
-  surface: '--card',
-  'on-surface': '--foreground',
-  primary: '--primary',
-  'primary-soft': '--primary-soft',
-  'primary-edge': '--primary-edge',
-  'primary-strong': '--primary-strong',
-  'primary-deep': '--primary-deep',
-  secondary: '--accent-brand',
-  accent: '--accent-brand',
-  info: '--info',
-  ink: '--ink',
-  error: '--error',
-  'error-soft': '--error-soft',
-  'error-edge': '--error-edge',
-  'error-strong': '--error-strong',
-  success: '--success',
-  'success-soft': '--success-soft',
-  'success-edge': '--success-edge',
-  'success-strong': '--success-strong',
-  warning: '--warning',
-  'warning-soft': '--warning-soft',
-  'warning-edge': '--warning-edge',
-  'warning-strong': '--warning-strong',
-  seo: '--seo',
-  aeo: '--aeo',
-  'source-chatgpt': '--source-chatgpt',
-  'source-chatgpt-soft': '--source-chatgpt-soft',
-  'source-claude': '--source-claude',
-  'source-claude-soft': '--source-claude-soft',
-  'source-perplexity': '--source-perplexity',
-  'source-perplexity-soft': '--source-perplexity-soft',
-  'source-google': '--source-google',
-  'source-google-soft': '--source-google-soft',
-  'source-bing': '--source-bing',
-  'source-bing-soft': '--source-bing-soft',
-  'source-humans': '--source-humans',
-  'source-humans-soft': '--source-humans-soft',
-  'ramp-track': '--ramp-track',
-  'ramp-200': '--ramp-200',
-  'ramp-300': '--ramp-300',
-  'ramp-400': '--ramp-400',
-  'ramp-500': '--ramp-500',
-  'health-bad': '--health-bad',
-  'health-bad-soft': '--health-bad-soft',
-  'health-mid': '--health-mid',
-  'health-mid-soft': '--health-mid-soft',
-  'health-good': '--health-good',
-  'health-good-soft': '--health-good-soft',
-  'category-meta': '--category-meta',
-  'category-meta-soft': '--category-meta-soft',
-  'category-content': '--category-content',
-  'category-content-soft': '--category-content-soft',
-  'category-technical': '--category-technical',
-  'category-technical-soft': '--category-technical-soft',
-  'category-social': '--category-social',
-  'category-social-soft': '--category-social-soft',
-  'category-schema': '--category-schema',
-  'category-schema-soft': '--category-schema-soft',
-}
 
 export const CSS_VAR_FALLBACKS: Record<ThemeMode, Record<string, string>> = {
   light: {
@@ -264,16 +200,6 @@ export function readCssThemeColor(cssVar: string, mode: ThemeMode): string {
   return value
 }
 
-export function readVuetifyThemeColors(mode: ThemeMode): Record<string, string> {
-  const colors: Record<string, string> = {}
-
-  for (const [vuetifyKey, cssVar] of Object.entries(VUETIFY_COLOR_CSS_VARS)) {
-    colors[vuetifyKey] = readCssThemeColor(cssVar, mode)
-  }
-
-  return colors
-}
-
 export function applyDocumentThemeVariables(mode: ThemeMode): void {
   if (typeof document === 'undefined') {
     return
@@ -285,47 +211,4 @@ export function applyDocumentThemeVariables(mode: ThemeMode): void {
   for (const [cssVar, value] of Object.entries(variables)) {
     root.style.setProperty(cssVar, value)
   }
-}
-
-export function syncVuetifyThemesFromCss(theme: ThemeInstance): void {
-  if (typeof document === 'undefined') {
-    return
-  }
-
-  const lightTheme = theme.themes.value.light
-  const darkTheme = theme.themes.value.dark
-
-  if (lightTheme !== undefined) {
-    lightTheme.colors = {
-      ...lightTheme.colors,
-      ...readVuetifyThemeColors('light'),
-    }
-  }
-
-  if (darkTheme !== undefined) {
-    darkTheme.colors = {
-      ...darkTheme.colors,
-      ...readVuetifyThemeColors('dark'),
-    }
-  }
-}
-
-export function vuetifyLightThemeColors(): Record<string, string> {
-  const colors: Record<string, string> = {}
-
-  for (const [vuetifyKey, cssVar] of Object.entries(VUETIFY_COLOR_CSS_VARS)) {
-    colors[vuetifyKey] = CSS_VAR_FALLBACKS.light[cssVar] ?? ''
-  }
-
-  return colors
-}
-
-export function vuetifyDarkThemeColors(): Record<string, string> {
-  const colors: Record<string, string> = {}
-
-  for (const [vuetifyKey, cssVar] of Object.entries(VUETIFY_COLOR_CSS_VARS)) {
-    colors[vuetifyKey] = CSS_VAR_FALLBACKS.dark[cssVar] ?? ''
-  }
-
-  return colors
 }

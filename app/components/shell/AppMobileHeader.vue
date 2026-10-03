@@ -1,32 +1,34 @@
 <script setup lang="ts">
+import IconifyIcon from '~/components/IconifyIcon.vue'
+
 const props = withDefaults(
   defineProps<{
-    showBack?: boolean;
-    backTo?: string;
-    showTrailing?: boolean;
-    onBack?: (() => void) | null;
+    showBack?: boolean
+    backTo?: string
+    showTrailing?: boolean
+    onBack?: (() => void) | null
   }>(),
   {
     showBack: false,
     showTrailing: true,
     onBack: null,
   },
-);
+)
 
 const router = useRouter()
 
 function handleBack(): void {
-  if (typeof props.onBack === "function") {
-    props.onBack();
-    return;
+  if (typeof props.onBack === 'function') {
+    props.onBack()
+    return
   }
 
   if (props.backTo) {
-    navigateTo(props.backTo);
-    return;
+    navigateTo(props.backTo)
+    return
   }
 
-  router.back();
+  router.back()
 }
 </script>
 
@@ -39,17 +41,16 @@ function handleBack(): void {
         class="app-mobile-header__leading flex size-12 shrink-0 items-center justify-center"
         :class="{ 'pointer-events-none invisible': !showBack }"
       >
-        <v-btn
-          icon
-          variant="tonal"
-          rounded="lg"
-          density="comfortable"
-          class="shrink-0 bg-foreground/5 -ml-1"
+        <UButton
+          variant="soft"
+          color="neutral"
+          square
+          class="shrink-0 -ml-1 bg-foreground/5"
           aria-label="Go back"
           @click="handleBack"
         >
-          <v-icon icon="lucide:arrow-left" size="24" />
-        </v-btn>
+          <IconifyIcon name="lucide:arrow-left" class="size-6" />
+        </UButton>
       </div>
 
       <div class="min-w-0 flex-1" />

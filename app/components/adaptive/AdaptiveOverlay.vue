@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MobileBottomSheet, { type BottomSheetSize } from '~/components/adaptive/MobileBottomSheet.vue'
-import { useDisplay } from 'vuetify'
 
 const props = withDefaults(
   defineProps<{
@@ -18,19 +17,11 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
-const display = useDisplay()
+const { mdAndUp } = useAppDisplay()
 
 const open = computed({
   get: () => props.modelValue,
   set: (value: boolean) => emit('update:modelValue', value),
-})
-
-const dialogMaxWidth = computed(() => {
-  if (props.size === 'large') {
-    return 560
-  }
-
-  return 480
 })
 
 const isFullscreenDialog = computed(() => props.size === 'full')
@@ -40,11 +31,23 @@ const mobileBodyClass = computed(() =>
     ? 'flex flex-col overflow-hidden px-4 pb-6 pt-2'
     : 'flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-6 pt-2',
 )
+
+const modalContentClass = computed(() => {
+  if (isFullscreenDialog.value) {
+    return 'rounded-none max-w-none'
+  }
+
+  if (props.size === 'large') {
+    return 'max-w-[560px]'
+  }
+
+  return 'max-w-[480px]'
+})
 </script>
 
 <template>
   <MobileBottomSheet
-    v-if="!display.mdAndUp.value"
+    v-if="!mdAndUp"
     v-model:open="open"
     :size="size"
   >
@@ -56,20 +59,15 @@ const mobileBodyClass = computed(() =>
     </div>
   </MobileBottomSheet>
 
-  <VDialog
+  <UModal
     v-else
-    v-model="open"
+    v-model:open="open"
     :fullscreen="isFullscreenDialog"
-    :max-width="isFullscreenDialog ? undefined : dialogMaxWidth"
-    scrollable
+    :title="title || undefined"
+    :ui="{ content: modalContentClass }"
   >
-    <VCard :class="isFullscreenDialog ? 'h-full rounded-none' : ''">
-      <VCardTitle v-if="title" class="font-display text-lg font-extrabold">
-        {{ title }}
-      </VCardTitle>
-      <VCardText :class="isFullscreenDialog ? 'h-full' : ''">
-        <slot />
-      </VCardText>
-    </VCard>
-  </VDialog>
+    <template #body>
+      <slot />
+    </template>
+  </UModal>
 </template>

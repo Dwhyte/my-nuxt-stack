@@ -2,7 +2,6 @@ import tailwindcss from '@tailwindcss/vite'
 import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 const packageRoot = dirname(fileURLToPath(import.meta.url))
 const certPath = resolve(packageRoot, 'certs/cert.pem')
@@ -37,13 +36,17 @@ export default defineNuxtConfig({
     enabled: true,
   },
 
-  modules: ['@pinia/nuxt', '@nuxtjs/mcp-toolkit'],
+  modules: ['@pinia/nuxt', '@nuxt/ui', '@nuxtjs/mcp-toolkit'],
+
+  ui: {
+    fonts: false,
+  },
 
   mcp: {
     name: 'my-nuxt-stack',
   },
 
-  css: ['~/assets/css/tailwind.css', '~/assets/css/main.css', '~/assets/css/vuetify-overrides.css', 'vuetify/styles'],
+  css: ['~/assets/css/tailwind.css', '~/assets/css/main.css', '~/assets/css/ui-overrides.css'],
 
   runtimeConfig: {
     betterAuthSecret: process.env.BETTER_AUTH_SECRET ?? '',
@@ -57,10 +60,6 @@ export default defineNuxtConfig({
       appName: process.env.NUXT_PUBLIC_APP_NAME ?? 'my-nuxt-stack',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? (localHttps ? 'https://localhost:3000' : 'http://localhost:3000'),
     },
-  },
-
-  build: {
-    transpile: ['vuetify'],
   },
 
   routeRules: {
@@ -88,15 +87,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-06-30',
 
   vite: {
-    vue: {
-      template: {
-        transformAssetUrls,
-      },
-    },
     server: {
       https: localHttps ?? undefined,
       hmr: localHttps ? { protocol: 'wss' } : undefined,
     },
-    plugins: [tailwindcss(), vuetify({ autoImport: true })],
+    plugins: [tailwindcss()],
   },
 })

@@ -1,36 +1,30 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    disabled?: boolean;
-    loading?: boolean;
-    type?: "button" | "submit";
-    block?: boolean;
-    href?: string;
-    prependIcon?: string;
-    appendIcon?: string;
+    disabled?: boolean
+    loading?: boolean
+    type?: 'button' | 'submit'
+    block?: boolean
+    href?: string
+    to?: string
   }>(),
   {
-    type: "button",
+    type: 'button',
     block: true,
   },
-);
+)
 </script>
 
 <template>
-  <v-btn
-    variant="flat"
-    size="large"
-    rounded="xl"
+  <UButton
+    size="lg"
     :block="block"
-    class="auth-cta-btn"
-    :type="href ? undefined : type"
-    :tag="href ? 'a' : 'button'"
+    :type="href || to ? undefined : type"
     :href="href"
+    :to="to"
     :disabled="disabled"
     :loading="loading"
-    :prepend-icon="prependIcon"
-    :append-icon="appendIcon"
   >
     <slot />
-  </v-btn>
+  </UButton>
 </template>

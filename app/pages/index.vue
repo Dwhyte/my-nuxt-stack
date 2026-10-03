@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppLoadingSpinner from '~/components/AppLoadingSpinner.vue'
 import { isAuthenticatedSession } from '~/lib/auth-client'
 import { fetchCurrentUser } from '~/features/auth/fetchCurrentUser'
 import {
@@ -25,6 +26,6 @@ onMounted(async () => {
 
 <template>
   <div class="flex min-h-dvh items-center justify-center">
-    <v-progress-circular indeterminate color="primary" size="40" />
+    <AppLoadingSpinner />
   </div>
 </template>

@@ -5,11 +5,11 @@ alwaysApply: true
 
 # my-nuxt-stack
 
-Nuxt 4 starter with Vuetify 4 + Tailwind v4, tRPC, BetterAuth, Prisma.
+Nuxt 4 starter with Nuxt UI + Tailwind v4, tRPC, BetterAuth, Prisma.
 
 ## Stack
 
-- Nuxt 4 + Vue 3 + Vuetify 4 + Tailwind v4
+- Nuxt 4 + Vue 3 + Nuxt UI + Tailwind v4
 - tRPC + vue-query for API
 - BetterAuth for auth (magic link + Google OAuth)
 - Prisma + PostgreSQL
@@ -21,19 +21,19 @@ Nuxt 4 starter with Vuetify 4 + Tailwind v4, tRPC, BetterAuth, Prisma.
 - Vue SFC order: `<script setup>` → `<template>` → `<style>`
 - Server business logic lives in `server/services/`, not in pages or tRPC routers
 - Background tasks live in `server/trigger/` — dispatch with `tasks.trigger()` from services or tRPC
-- Mobile overlays: `MobileBottomSheet` with `AdaptiveOverlay` for desktop
-- Primary action buttons: use `AppActionButton`
-- Nav config: `app/constants/appNav.ts`
+- Mobile overlays: `MobileBottomSheet` with `AdaptiveOverlay` for desktop (optional; demo shell is centered like my-lara-stack)
+- Primary action buttons: use `AppActionButton` or `UButton` `size="lg"` `block`
+- Nav config: `app/constants/appNav.ts` (legacy shell components; demo pages use centered layouts)
 
 ## UI
 
-- Vuetify vs Tailwind split: see [frontend-ui](frontend-ui.mdc)
-- Primary action buttons: use `AppActionButton` — see [action-buttons](action-buttons.mdc)
-- App shell: `app/layouts/app.vue` with sidebar + bottom nav
+- Nuxt UI vs Tailwind split: see [frontend-ui](frontend-ui.mdc)
+- Primary action buttons: see [action-buttons](action-buttons.mdc)
+- App shell: centered demo layout — `app/layouts/app.vue` (`min-h-svh bg-default`), aligned with my-lara-stack
 
 ## Skills
 
 Activate project skills from `.cursor/skills/` when relevant:
 
-- **UI:** `tailwindcss-development`, `vuetify-development`
+- **UI:** `tailwindcss-development`
 - **Trigger.dev:** see [trigger-skills](trigger-skills.mdc)

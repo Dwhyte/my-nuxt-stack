@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppLoadingSpinner from '~/components/AppLoadingSpinner.vue'
 import { navigateAfterAuth } from '~/composables/usePostAuthNavigation'
 
 definePageMeta({
@@ -23,12 +24,7 @@ onMounted(async () => {
 
 <template>
   <div class="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
-    <v-progress-circular
-      v-if="isPending"
-      indeterminate
-      color="primary"
-      size="40"
-    />
+    <AppLoadingSpinner v-if="isPending" />
     <template v-else-if="callbackError">
       <h1 class="font-display text-2xl font-extrabold text-foreground">
         Google sign-in failed
@@ -36,14 +32,13 @@ onMounted(async () => {
       <p class="mt-3 max-w-md text-sm text-muted-foreground">
         {{ callbackError }}
       </p>
-      <v-btn
+      <UButton
         class="mt-6"
         color="primary"
-        rounded="lg"
         to="/login"
       >
         Back to sign in
-      </v-btn>
+      </UButton>
     </template>
   </div>
 </template>

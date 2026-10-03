@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppLoadingSpinner from '~/components/AppLoadingSpinner.vue'
 import {
   finalizeAuthSession,
   resolvePostAuthDestinationForUser,
@@ -43,6 +44,6 @@ watch(
 
 <template>
   <div class="flex min-h-dvh items-center justify-center">
-    <v-progress-circular indeterminate color="primary" size="40" />
+    <AppLoadingSpinner />
   </div>
 </template>

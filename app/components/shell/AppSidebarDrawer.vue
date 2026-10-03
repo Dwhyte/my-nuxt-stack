@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { useDisplay } from 'vuetify'
+import IconifyIcon from '~/components/IconifyIcon.vue'
 import { appSideNavItems } from '~/constants/appNav'
 
-const DRAWER_WIDTH = computed(() => isDesktop.value ? 227 : 300)
+const DRAWER_WIDTH_DESKTOP = 227
 const RAIL_WIDTH = 52
 
 const drawerOpen = defineModel<boolean>({ default: false })
 
 const route = useRoute()
-const display = useDisplay()
-const isDesktop = computed(() => display.mdAndUp.value)
+const { isDesktop } = useAppDisplay()
 const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
 const appInitial = computed(() => appName.value.charAt(0).toUpperCase() || 'A')
+
+const railExpanded = ref(false)
 
 interface ResolvedNavChild {
   key: string
@@ -63,6 +64,8 @@ const settingsNavActive = computed(() => {
   return current === '/settings' || current.startsWith('/settings/')
 })
 
+const showLabels = computed(() => !isDesktop.value || railExpanded.value)
+
 watch(
   isDesktop,
   (desktop) => {
@@ -72,26 +75,28 @@ watch(
 )
 
 function navItemClass(active: boolean, disabled: boolean, extra = '', spacedOnMobile = false): string {
-  const classes = ['side-nav-item', 'rounded-lg', extra].filter(Boolean)
+  const classes = ['side-nav-item', 'flex items-center gap-2 rounded-lg px-2 py-2 no-underline transition-colors', extra].filter(Boolean)
 
   if (spacedOnMobile && !isDesktop.value) {
     classes.push('mb-[0.7rem]')
   }
 
-  if (!active && !disabled) {
+  if (active && !disabled) {
+    classes.push('side-nav-item--active')
+  } else if (!active && !disabled) {
     classes.push('side-nav-item--inactive')
   }
 
   return classes.join(' ')
 }
 
-const navIconSize = computed(() => (isDesktop.value ? 18 : 22))
+const navIconSizeClass = computed(() => (isDesktop.value ? 'size-[18px]' : 'size-[22px]'))
 
 function navTitleClass(gap: 'gap-2' | 'gap-4' = 'gap-4'): string {
   return [
-    'flex items-center',
+    'flex min-w-0 items-center',
     gap,
-    isDesktop.value ? 'text-sm font-medium' : '!text-lg font-medium',
+    isDesktop.value ? 'text-sm font-medium' : 'text-lg font-medium',
   ].join(' ')
 }
 
@@ -99,121 +104,160 @@ function openSettings(): void {
   drawerOpen.value = false
   navigateTo('/settings')
 }
+
+function onNavAction(): void {
+  drawerOpen.value = false
+}
+
+const desktopWidth = computed(() => (railExpanded.value ? DRAWER_WIDTH_DESKTOP : RAIL_WIDTH))
 </script>
 
 <template>
-  <v-navigation-drawer
-    v-model="drawerOpen"
-    order="0"
-    class="surface-chrome-sidebar"
-    :width="DRAWER_WIDTH"
-    :temporary="!isDesktop"
-    :rail="isDesktop"
-    :rail-width="RAIL_WIDTH"
-    :expand-on-hover="isDesktop"
+  <aside
+    v-if="isDesktop"
+    class="surface-chrome-sidebar hidden shrink-0 flex-col overflow-hidden transition-[width] duration-200 ease-out md:flex"
+    :style="{ width: `${desktopWidth}px` }"
+    @mouseenter="railExpanded = true"
+    @mouseleave="railExpanded = false"
   >
-    <template #prepend>
-      <div class="flex items-center px-2 py-3">
-        <NuxtLink
-          to="/dashboard"
-          class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground no-underline"
-          :aria-label="`${appName} home`"
-        >
-          <span class="font-display text-sm font-extrabold">{{ appInitial }}</span>
-        </NuxtLink>
-      </div>
-    </template>
+    <div class="flex items-center px-2 py-3">
+      <NuxtLink
+        to="/dashboard"
+        class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground no-underline"
+        :aria-label="`${appName} home`"
+      >
+        <span class="font-display text-sm font-extrabold">{{ appInitial }}</span>
+      </NuxtLink>
+    </div>
 
-    <v-list nav :lines="false">
+    <nav class="flex flex-1 flex-col gap-0.5 px-2" aria-label="Main">
       <template v-for="item in navItems" :key="item.key">
-        <v-list-group v-if="item.children.length > 0" :value="item.key">
-          <template #activator="{ props: activatorProps }">
-            <v-list-item v-bind="activatorProps" :active="item.active" :class="navItemClass(item.active, item.disabled, '', true)">
-              <v-list-item-title :class="navTitleClass('gap-2')">
-                <v-icon v-if="item.icon" :size="navIconSize">{{ item.icon }}</v-icon>
-                {{ item.label }}
-                <span v-if="item.badge" class="ms-1 text-on-surface/40">{{ item.badge }}</span>
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-
-          <v-list-item
-            v-for="child in item.children"
-            :key="child.key"
-            link
-            :to="child.disabled ? undefined : child.link"
-            :active="child.active"
-            :disabled="child.disabled"
-            :class="navItemClass(child.active, child.disabled, 'ml-5', true)"
-          >
-            <v-list-item-title :class="navTitleClass('gap-2')">
-              {{ child.label }}
-              <span v-if="child.badge" class="ms-1 text-on-surface/40">{{ child.badge }}</span>
-            </v-list-item-title>
-          </v-list-item>
-        </v-list-group>
-
-        <v-list-item
-          v-else-if="item.action"
-          link
-          :class="navItemClass(false, item.disabled, '', true)"
-          @click="drawerOpen = false"
+        <button
+          v-if="item.action"
+          type="button"
+          :class="navItemClass(false, item.disabled, 'w-full text-left', true)"
+          @click="onNavAction"
         >
-          <v-list-item-title :class="navTitleClass()">
-            <v-icon v-if="item.icon" :size="navIconSize">{{ item.icon }}</v-icon>
-            {{ item.label }}
-            <span v-if="item.badge" class="ms-1 text-on-surface/40">{{ item.badge }}</span>
-          </v-list-item-title>
-        </v-list-item>
+          <span :class="navTitleClass()">
+            <IconifyIcon
+              v-if="item.icon"
+              :name="item.icon"
+              class="side-nav-item__icon shrink-0"
+              :class="navIconSizeClass"
+            />
+            <span
+              v-show="showLabels"
+              class="truncate"
+            >{{ item.label }}</span>
+            <span v-if="item.badge && showLabels" class="ms-1 text-muted-foreground/60">{{ item.badge }}</span>
+          </span>
+        </button>
 
-        <v-list-item
+        <NuxtLink
           v-else
-          link
           :to="item.disabled ? undefined : item.link"
-          :active="item.active"
-          :disabled="item.disabled"
           :class="navItemClass(item.active, item.disabled, '', true)"
         >
-          <v-list-item-title :class="navTitleClass()">
-            <v-icon v-if="item.icon" :size="navIconSize">{{ item.icon }}</v-icon>
-            {{ item.label }}
-            <span v-if="item.badge" class="ms-1 text-on-surface/40">{{ item.badge }}</span>
-          </v-list-item-title>
-        </v-list-item>
+          <span :class="navTitleClass()">
+            <IconifyIcon
+              v-if="item.icon"
+              :name="item.icon"
+              class="side-nav-item__icon shrink-0"
+              :class="navIconSizeClass"
+            />
+            <span
+              v-show="showLabels"
+              class="truncate"
+            >{{ item.label }}</span>
+            <span v-if="item.badge && showLabels" class="ms-1 text-muted-foreground/60">{{ item.badge }}</span>
+          </span>
+        </NuxtLink>
       </template>
-    </v-list>
+    </nav>
 
-    <template #append>
-      <v-divider />
-      <div class="flex flex-col gap-1 pb-2">
-        <v-list density="compact" nav :lines="false">
-          <v-list-item
-            v-if="isDesktop"
-            link
-            to="/settings"
-            :active="settingsNavActive"
-            :class="navItemClass(settingsNavActive, false)"
+    <div class="mt-auto border-t border-border px-2 pb-2 pt-1">
+      <NuxtLink
+        to="/settings"
+        :class="navItemClass(settingsNavActive, false)"
+      >
+        <span :class="navTitleClass()">
+          <IconifyIcon name="solar:settings-linear" class="side-nav-item__icon shrink-0" :class="navIconSizeClass" />
+          <span v-show="showLabels" class="truncate">Settings</span>
+        </span>
+      </NuxtLink>
+    </div>
+  </aside>
+
+  <USlideover
+    v-else
+    v-model:open="drawerOpen"
+    side="left"
+    :ui="{ content: 'surface-chrome-sidebar w-[300px] max-w-[85vw]' }"
+  >
+    <template #body>
+      <div class="flex h-full flex-col">
+        <div class="flex items-center px-2 py-3">
+          <NuxtLink
+            to="/dashboard"
+            class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground no-underline"
+            :aria-label="`${appName} home`"
+            @click="drawerOpen = false"
           >
-            <v-list-item-title :class="navTitleClass()">
-              <v-icon icon="solar:settings-linear" :size="navIconSize" />
-              Settings
-            </v-list-item-title>
-          </v-list-item>
+            <span class="font-display text-sm font-extrabold">{{ appInitial }}</span>
+          </NuxtLink>
+        </div>
 
-          <v-list-item
-            v-else
-            link
-            :active="settingsNavActive"
-            :class="navItemClass(settingsNavActive, false)"
+        <nav class="flex flex-1 flex-col gap-0.5 px-2" aria-label="Main">
+          <template v-for="item in navItems" :key="item.key">
+            <button
+              v-if="item.action"
+              type="button"
+              :class="navItemClass(false, item.disabled, 'w-full text-left', true)"
+              @click="onNavAction"
+            >
+              <span :class="navTitleClass()">
+                <IconifyIcon
+                  v-if="item.icon"
+                  :name="item.icon"
+                  class="side-nav-item__icon shrink-0"
+                  :class="navIconSizeClass"
+                />
+                <span class="truncate">{{ item.label }}</span>
+              </span>
+            </button>
+
+            <NuxtLink
+              v-else
+              :to="item.disabled ? undefined : item.link"
+              :class="navItemClass(item.active, item.disabled, '', true)"
+              @click="drawerOpen = false"
+            >
+              <span :class="navTitleClass()">
+                <IconifyIcon
+                  v-if="item.icon"
+                  :name="item.icon"
+                  class="side-nav-item__icon shrink-0"
+                  :class="navIconSizeClass"
+                />
+                <span class="truncate">{{ item.label }}</span>
+              </span>
+            </NuxtLink>
+          </template>
+        </nav>
+
+        <div class="mt-auto border-t border-border px-2 pb-2 pt-1">
+          <button
+            type="button"
+            :class="navItemClass(settingsNavActive, false, 'w-full text-left')"
             @click="openSettings"
           >
-            <v-list-item-title :class="navTitleClass()">
-              <v-icon icon="solar:settings-linear" :size="navIconSize" />
-              Settings
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
+            <span :class="navTitleClass()">
+              <IconifyIcon name="solar:settings-linear" class="side-nav-item__icon shrink-0" :class="navIconSizeClass" />
+              <span class="truncate">Settings</span>
+            </span>
+          </button>
+        </div>
       </div>
     </template>
-  </v-navigation-drawer>
+  </USlideover>
 </template>
